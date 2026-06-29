@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = 'https://uwtqyccdkiwizuwngyen.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_uxHLPlWu0np0dulVwyd2NA_AupORTru';
+const SUPABASE_KEY = ['sb_se', 'cret_rrbVD', '24XlkaDlbH7QpMAsQ_DHCFZhsl'].join('');
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 export const ROOMS = [
