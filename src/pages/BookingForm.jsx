@@ -40,6 +40,14 @@ export default function BookingForm() {
   const handleFileChange = (e) => {
     if (e.target.files.length > 0) {
       const file = e.target.files[0];
+      
+      // Limit file size to 500KB for Supabase Base64 upload
+      if (file.size > 500 * 1024) {
+        alert('Maaf, ukuran file undangan terlalu besar. Maksimal 500KB.');
+        e.target.value = '';
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (evt) => {
         setFormData(prev => ({
@@ -73,10 +81,16 @@ export default function BookingForm() {
 
     const room = ROOMS.find(r => r.id === formData.roomId);
     
-    await addBooking({
+    const result = await addBooking({
       ...formData,
       roomName: room.name,
     });
+    
+    if (!result) {
+      setErrorMsg('Gagal mengirim ke database online. Pastikan ukuran file tidak terlalu besar (maks 500KB) dan koneksi internet stabil.');
+      setIsSubmitting(false);
+      return;
+    }
     
     setSubmitted(true);
     setIsSubmitting(false);
