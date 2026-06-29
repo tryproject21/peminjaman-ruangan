@@ -5,9 +5,9 @@ const SUPABASE_KEY = ['sb_se', 'cret_rrbVD', '24XlkaDlbH7QpMAsQ_DHCFZhsl'].join(
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 export const ROOMS = [
-  { id: 'r1', name: 'Ruang Rapat Utama (Lantai 2)' },
-  { id: 'r2', name: 'Ruang Rapat Kecil (Lantai 3)' },
-  { id: 'r3', name: 'Aula Serbaguna (Lantai 1)' },
+  { id: '1', name: 'Ruang Rapat Besar Lt.4' },
+  { id: '2', name: 'Ruangan Kaca' },
+  { id: '3', name: 'Ruang Kecil' },
 ];
 
 export const KELOMPOK_KERJA = [
