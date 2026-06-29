@@ -14,17 +14,34 @@ export default function SecretaryPanel() {
   const [editData, setEditData] = useState({});
   const [editError, setEditError] = useState('');
 
-  const loadBookings = () => {
-    const all = getBookings().sort((a, b) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [conflictsData, setConflictsData] = useState({});
+
+  const loadBookings = async () => {
+    setIsLoading(true);
+    const all = await getBookings();
+    const sorted = all.sort((a, b) => {
       if (a.status === 'PENDING' && b.status !== 'PENDING') return -1;
       if (a.status !== 'PENDING' && b.status === 'PENDING') return 1;
       return new Date(b.createdAt) - new Date(a.createdAt);
     });
-    setBookings(all);
+    setBookings(sorted);
+
+    // Pre-calculate conflicts for pending bookings
+    const conflictsMap = {};
+    for (const b of sorted) {
+      if (b.status === 'PENDING') {
+        conflictsMap[b.id] = await getConflicts(b);
+      }
+    }
+    setConflictsData(conflictsMap);
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    if (isSecretary) loadBookings();
+    if (isSecretary) {
+      loadBookings();
+    }
   }, [isSecretary]);
 
   if (!isSecretary) {
@@ -69,9 +86,9 @@ export default function SecretaryPanel() {
     );
   }
 
-  const handleStatusUpdate = (id, newStatus) => {
-    updateBookingStatus(id, newStatus);
-    loadBookings();
+  const handleStatusUpdate = async (id, newStatus) => {
+    await updateBookingStatus(id, newStatus);
+    await loadBookings();
   };
 
   const startEdit = (booking) => {
@@ -93,7 +110,7 @@ export default function SecretaryPanel() {
     setEditError('');
   };
 
-  const saveEdit = (id) => {
+  const saveEdit = async (id) => {
     setEditError('');
 
     if (editData.startTime >= editData.endTime) {
@@ -101,20 +118,20 @@ export default function SecretaryPanel() {
       return;
     }
 
-    const isOverlapping = checkOverlap(editData.date, editData.startTime, editData.endTime, editData.roomId, id);
+    const isOverlapping = await checkOverlap(editData.date, editData.startTime, editData.endTime, editData.roomId, id);
     if (isOverlapping) {
       setEditError('Jadwal bentrok dengan peminjaman lain di ruangan dan waktu yang sama.');
       return;
     }
 
     const room = ROOMS.find(r => r.id === editData.roomId);
-    editBooking(id, {
+    await editBooking(id, {
       ...editData,
       roomName: room.name,
     });
     setEditingId(null);
     setEditData({});
-    loadBookings();
+    await loadBookings();
   };
 
   const handleEditChange = (e) => {
@@ -153,7 +170,7 @@ export default function SecretaryPanel() {
             const isEditing = editingId === b.id;
             let conflicts = [];
             if (b.status === 'PENDING') {
-              conflicts = getConflicts(b);
+              conflicts = conflictsData[b.id] || [];
             }
 
             return (

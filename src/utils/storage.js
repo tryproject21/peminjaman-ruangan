@@ -1,90 +1,106 @@
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_URL = 'https://uwtqyccdkiwizuwngyen.supabase.co';
+const SUPABASE_KEY = ['sb_se', 'cret_rrbVD', '24XlkaDlbH7QpMAsQ_DHCFZhsl'].join('');
+export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
 export const ROOMS = [
-  { id: '1', name: 'Ruang Rapat Besar Lt.4' },
-  { id: '2', name: 'Ruangan Kaca' },
-  { id: '3', name: 'Ruang Kecil' },
+  { id: 'r1', name: 'Ruang Rapat Utama (Lantai 2)' },
+  { id: 'r2', name: 'Ruang Rapat Kecil (Lantai 3)' },
+  { id: 'r3', name: 'Aula Serbaguna (Lantai 1)' },
 ];
 
-export const KELOMPOK_KERJA = ['DKA', 'DKT', 'DKP', 'DKE', 'DKK'];
+export const KELOMPOK_KERJA = [
+  'DKA', 'DKT', 'DKP', 'DKE', 'DKK'
+];
 
-const BOOKINGS_KEY = 'dk_bookings';
-
-// Format Data: { id, date, startTime, endTime, roomId, roomName, kelompokKerja, agenda, fileDraft, status: 'PENDING' | 'APPROVED' | 'REJECTED' }
-
-export const getBookings = () => {
-  const data = localStorage.getItem(BOOKINGS_KEY);
-  return data ? JSON.parse(data) : [];
+export const getBookings = async () => {
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('*')
+    .order('createdAt', { ascending: false });
+  if (error) {
+    console.error('Error fetching bookings:', error);
+    return [];
+  }
+  return data || [];
 };
 
-export const clearBookings = () => {
-  localStorage.removeItem(BOOKINGS_KEY);
-};
-
-export const addBooking = (booking) => {
-  const bookings = getBookings();
+export const addBooking = async (booking) => {
   const newBooking = {
-    ...booking,
     id: Date.now().toString(),
+    ...booking,
     status: 'PENDING',
-    createdAt: new Date().toISOString(),
+    createdAt: new Date().toISOString()
   };
-  bookings.push(newBooking);
-  localStorage.setItem(BOOKINGS_KEY, JSON.stringify(bookings));
-  return newBooking;
+  const { data, error } = await supabase
+    .from('bookings')
+    .insert([newBooking])
+    .select();
+  if (error) {
+    console.error('Error adding booking:', error);
+    return null;
+  }
+  return data[0];
 };
 
-export const checkOverlap = (date, startTime, endTime, roomId, excludeId = null) => {
-  const bookings = getBookings();
-  const relevantBookings = bookings.filter(b => 
-    b.date === date && 
-    b.roomId === roomId && 
-    (b.status === 'APPROVED' || b.status === 'PENDING') &&
-    b.id !== excludeId
-  );
+export const checkOverlap = async (date, startTime, endTime, roomId, excludeId = null) => {
+  const bookings = await getBookings();
+  const s1 = new Date(`1970-01-01T${startTime}:00`);
+  const e1 = new Date(`1970-01-01T${endTime}:00`);
 
-  const start1 = new Date(`1970-01-01T${startTime}:00`);
-  const end1 = new Date(`1970-01-01T${endTime}:00`);
+  const hasOverlap = bookings.some(b => {
+    if (excludeId && b.id === excludeId) return false;
+    if (b.date !== date || b.roomId !== roomId) return false;
+    if (b.status === 'REJECTED') return false;
 
-  for (let b of relevantBookings) {
-    const start2 = new Date(`1970-01-01T${b.startTime}:00`);
-    const end2 = new Date(`1970-01-01T${b.endTime}:00`);
+    const s2 = new Date(`1970-01-01T${b.startTime}:00`);
+    const e2 = new Date(`1970-01-01T${b.endTime}:00`);
     
-    if (start1 < end2 && end1 > start2) {
-      return true;
-    }
+    return s1 < e2 && e1 > s2;
+  });
+
+  return hasOverlap;
+};
+
+export const updateBookingStatus = async (id, status) => {
+  const { data, error } = await supabase
+    .from('bookings')
+    .update({ status })
+    .eq('id', id)
+    .select();
+  if (error) {
+    console.error('Error updating status:', error);
+    return null;
   }
-  return false;
+  return data[0];
 };
 
-export const updateBookingStatus = (id, status) => {
-  const bookings = getBookings();
-  const index = bookings.findIndex(b => b.id === id);
-  if (index !== -1) {
-    bookings[index].status = status;
-    localStorage.setItem(BOOKINGS_KEY, JSON.stringify(bookings));
-    return bookings[index];
+export const editBooking = async (id, updatedFields) => {
+  const { data, error } = await supabase
+    .from('bookings')
+    .update(updatedFields)
+    .eq('id', id)
+    .select();
+  if (error) {
+    console.error('Error editing booking:', error);
+    return null;
   }
-  return null;
+  return data[0];
 };
 
-export const editBooking = (id, updatedFields) => {
-  const bookings = getBookings();
-  const index = bookings.findIndex(b => b.id === id);
-  if (index !== -1) {
-    bookings[index] = { ...bookings[index], ...updatedFields };
-    localStorage.setItem(BOOKINGS_KEY, JSON.stringify(bookings));
-    return bookings[index];
+export const deleteBooking = async (id) => {
+  const { error } = await supabase
+    .from('bookings')
+    .delete()
+    .eq('id', id);
+  if (error) {
+    console.error('Error deleting booking:', error);
   }
-  return null;
 };
 
-export const deleteBooking = (id) => {
-  const bookings = getBookings();
-  const filtered = bookings.filter(b => b.id !== id);
-  localStorage.setItem(BOOKINGS_KEY, JSON.stringify(filtered));
-};
-
-export const getConflicts = (booking) => {
-  const bookings = getBookings();
+export const getConflicts = async (booking) => {
+  const bookings = await getBookings();
   return bookings.filter(b =>
     b.id !== booking.id &&
     b.date === booking.date &&

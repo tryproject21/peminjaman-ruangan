@@ -37,9 +37,13 @@ export default function Dashboard() {
   const [editData, setEditData] = useState({});
   const [editError, setEditError] = useState('');
 
-  const loadBookings = () => {
-    const allBookings = getBookings().filter(b => b.status === 'APPROVED');
-    setBookings(allBookings);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const loadBookings = async () => {
+    setIsLoading(true);
+    const allBookings = await getBookings();
+    setBookings(allBookings.filter(b => b.status === 'APPROVED'));
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -110,10 +114,10 @@ export default function Dashboard() {
     setEditError('');
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (window.confirm('Apakah Anda yakin ingin menghapus jadwal ini?')) {
-      deleteBooking(selectedBooking.id);
-      loadBookings();
+      await deleteBooking(selectedBooking.id);
+      await loadBookings();
       closeDetail();
     }
   };
@@ -131,20 +135,20 @@ export default function Dashboard() {
     });
   };
 
-  const saveEdit = () => {
+  const saveEdit = async () => {
     setEditError('');
     if (editData.startTime >= editData.endTime) {
       setEditError('Waktu selesai harus lebih besar dari waktu mulai.');
       return;
     }
-    const isOverlapping = checkOverlap(editData.date, editData.startTime, editData.endTime, editData.roomId, selectedBooking.id);
+    const isOverlapping = await checkOverlap(editData.date, editData.startTime, editData.endTime, editData.roomId, selectedBooking.id);
     if (isOverlapping) {
       setEditError('Jadwal bentrok dengan peminjaman lain.');
       return;
     }
     const room = ROOMS.find(r => r.id === editData.roomId);
-    editBooking(selectedBooking.id, { ...editData, roomName: room.name });
-    loadBookings();
+    await editBooking(selectedBooking.id, { ...editData, roomName: room.name });
+    await loadBookings();
     closeDetail();
   };
 
@@ -163,7 +167,6 @@ export default function Dashboard() {
 
   return (
     <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '1.5rem' }} className="animate-fade-in">
-
       {/* Top Header Bar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -213,8 +216,14 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Main Layout */}
-      <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
+      {isLoading ? (
+        <div style={{ textAlign: 'center', padding: '4rem 0', color: 'var(--text-muted)' }}>
+          <div className="spinner" style={{ width: '40px', height: '40px', margin: '0 auto 1rem', border: '4px solid rgba(0,0,0,0.1)', borderLeftColor: 'hsl(var(--color-primary))', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+          <p>Memuat jadwal dari database online...</p>
+          <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
 
         {/* Left Sidebar */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flexShrink: 0 }}>
@@ -404,7 +413,8 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      )}
 
       {/* ===== DETAIL MODAL ===== */}
       {selectedBooking && (

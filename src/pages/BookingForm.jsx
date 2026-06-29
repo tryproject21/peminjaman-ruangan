@@ -19,6 +19,7 @@ export default function BookingForm() {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
   if (!isKelompokKerja) {
@@ -52,29 +53,33 @@ export default function BookingForm() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
+    setIsSubmitting(true);
 
     if (formData.startTime >= formData.endTime) {
       setErrorMsg('Waktu selesai harus lebih besar dari waktu mulai.');
+      setIsSubmitting(false);
       return;
     }
 
-    const isOverlapping = checkOverlap(formData.date, formData.startTime, formData.endTime, formData.roomId);
+    const isOverlapping = await checkOverlap(formData.date, formData.startTime, formData.endTime, formData.roomId);
     if (isOverlapping) {
-      setErrorMsg('Maaf, ruangan sudah dibooking pada jam tersebut (terdapat bentrok jadwal). Silakan pilih waktu atau ruangan lain.');
+      setErrorMsg('Jadwal bentrok! Sudah ada peminjaman di ruangan dan waktu yang sama.');
+      setIsSubmitting(false);
       return;
     }
 
     const room = ROOMS.find(r => r.id === formData.roomId);
     
-    addBooking({
+    await addBooking({
       ...formData,
       roomName: room.name,
     });
     
     setSubmitted(true);
+    setIsSubmitting(false);
     setTimeout(() => {
       navigate('/');
     }, 2000);
@@ -167,8 +172,8 @@ export default function BookingForm() {
 
           <div className="mt-4 flex justify-end gap-2">
             <button type="button" className="btn btn-outline" onClick={() => navigate('/')}>Batal</button>
-            <button type="submit" className="btn btn-primary">
-              <Send size={18} /> Ajukan Peminjaman
+            <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} disabled={isSubmitting}>
+              <Send size={18} /> {isSubmitting ? 'Mengirim...' : 'Kirim Pengajuan'}
             </button>
           </div>
         </form>
