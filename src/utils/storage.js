@@ -49,7 +49,7 @@ export const addBooking = async (booking) => {
     
   if (error) {
     console.error('Error adding booking:', error);
-    return null;
+    return { error };
   }
   return data[0];
 };

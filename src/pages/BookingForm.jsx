@@ -86,6 +86,12 @@ export default function BookingForm() {
       roomName: room.name,
     });
     
+    if (result && result.error) {
+      setErrorMsg(`Gagal: ${result.error.message || JSON.stringify(result.error)}`);
+      setIsSubmitting(false);
+      return;
+    }
+    
     if (!result) {
       setErrorMsg('Gagal mengirim ke database online. Pastikan ukuran file tidak terlalu besar (maks 500KB) dan koneksi internet stabil.');
       setIsSubmitting(false);
