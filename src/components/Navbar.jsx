@@ -50,23 +50,40 @@ export default function Navbar() {
           <div style={{ width: '1px', height: '2rem', background: 'var(--border-light)' }}></div>
 
           <div className="flex items-center gap-2">
-            <User size={18} className="text-muted" />
-            <select 
-              value={role} 
-              onChange={handleRoleChange}
-              className="form-control"
-              style={{ padding: '0.5rem', width: 'auto', fontWeight: '500' }}
-            >
-              <option value="GUEST">Guest (Publik)</option>
-              <option value="SECRETARY">Sekretaris</option>
-              <optgroup label="Kelompok Kerja">
-                <option value="DKA">Pokja DKA</option>
-                <option value="DKT">Pokja DKT</option>
-                <option value="DKP">Pokja DKP</option>
-                <option value="DKE">Pokja DKE</option>
-                <option value="DKK">Pokja DKK</option>
-              </optgroup>
-            </select>
+            {isSecretary ? (
+              <div className="flex items-center gap-3">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'hsl(var(--color-primary))' }}>
+                  <ShieldCheck size={18} />
+                  <span className="text-sm font-semibold">Admin Sekretaris</span>
+                </div>
+                <button 
+                  onClick={() => { login('GUEST'); navigate('/'); }} 
+                  className="btn btn-outline" 
+                  style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem' }}
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <>
+                <User size={18} className="text-muted" />
+                <select 
+                  value={role} 
+                  onChange={handleRoleChange}
+                  className="form-control"
+                  style={{ padding: '0.5rem', width: 'auto', fontWeight: '500' }}
+                >
+                  <option value="GUEST">Guest (Publik)</option>
+                  <optgroup label="Kelompok Kerja">
+                    <option value="DKA">Pokja DKA</option>
+                    <option value="DKT">Pokja DKT</option>
+                    <option value="DKP">Pokja DKP</option>
+                    <option value="DKE">Pokja DKE</option>
+                    <option value="DKK">Pokja DKK</option>
+                  </optgroup>
+                </select>
+              </>
+            )}
           </div>
         </div>
       </div>

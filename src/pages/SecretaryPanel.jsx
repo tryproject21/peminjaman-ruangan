@@ -6,7 +6,9 @@ import { format, parseISO } from 'date-fns';
 import { id } from 'date-fns/locale';
 
 export default function SecretaryPanel() {
-  const { isSecretary } = useAuth();
+  const { isSecretary, login } = useAuth();
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
   const [bookings, setBookings] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
@@ -22,15 +24,47 @@ export default function SecretaryPanel() {
   };
 
   useEffect(() => {
-    loadBookings();
-  }, []);
+    if (isSecretary) loadBookings();
+  }, [isSecretary]);
 
   if (!isSecretary) {
+    const handleLogin = (e) => {
+      e.preventDefault();
+      if (password === 'sekretaris123') {
+        login('SECRETARY');
+        setLoginError('');
+      } else {
+        setLoginError('Password salah!');
+      }
+    };
+
     return (
-      <div className="container mt-8 animate-fade-in text-center">
-        <AlertCircle size={48} style={{ color: 'hsl(var(--color-danger))', margin: '0 auto 1rem' }} />
-        <h2 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '0.5rem' }}>Akses Ditolak</h2>
-        <p className="text-muted">Halaman ini khusus untuk Sekretaris Direktorat.</p>
+      <div className="container mt-8 animate-fade-in" style={{ maxWidth: '400px', margin: '4rem auto' }}>
+        <div className="card" style={{ padding: '2rem' }}>
+          <div className="text-center mb-6">
+            <ShieldCheck size={48} style={{ color: 'hsl(var(--color-primary))', margin: '0 auto 1rem' }} />
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '700' }}>Login Sekretaris</h2>
+            <p className="text-muted text-sm mt-1">Masukkan kata sandi untuk mengakses panel approval.</p>
+          </div>
+          <form onSubmit={handleLogin} className="flex flex-col gap-4">
+            {loginError && (
+              <div style={{ background: 'hsl(var(--color-danger-light))', color: 'hsl(var(--color-danger))', padding: '0.75rem', borderRadius: '0.5rem', fontSize: '0.8125rem', textAlign: 'center', fontWeight: '600' }}>
+                {loginError}
+              </div>
+            )}
+            <div>
+              <input 
+                type="password" 
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="form-control" 
+                placeholder="Kata Sandi (default: sekretaris123)" 
+                autoFocus
+              />
+            </div>
+            <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }}>Masuk Panel</button>
+          </form>
+        </div>
       </div>
     );
   }
