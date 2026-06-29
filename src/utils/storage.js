@@ -76,3 +76,26 @@ export const editBooking = (id, updatedFields) => {
   }
   return null;
 };
+
+export const deleteBooking = (id) => {
+  const bookings = getBookings();
+  const filtered = bookings.filter(b => b.id !== id);
+  localStorage.setItem(BOOKINGS_KEY, JSON.stringify(filtered));
+};
+
+export const getConflicts = (booking) => {
+  const bookings = getBookings();
+  return bookings.filter(b =>
+    b.id !== booking.id &&
+    b.date === booking.date &&
+    b.roomId === booking.roomId &&
+    (b.status === 'APPROVED' || b.status === 'PENDING') &&
+    (() => {
+      const s1 = new Date(`1970-01-01T${booking.startTime}:00`);
+      const e1 = new Date(`1970-01-01T${booking.endTime}:00`);
+      const s2 = new Date(`1970-01-01T${b.startTime}:00`);
+      const e2 = new Date(`1970-01-01T${b.endTime}:00`);
+      return s1 < e2 && e1 > s2;
+    })()
+  );
+};

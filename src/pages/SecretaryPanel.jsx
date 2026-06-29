@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { getBookings, updateBookingStatus, editBooking, checkOverlap, ROOMS, KELOMPOK_KERJA } from '../utils/storage';
-import { CheckCircle, XCircle, AlertCircle, Clock, FileText, Pencil, X, Save, Users } from 'lucide-react';
+import { getBookings, updateBookingStatus, editBooking, checkOverlap, getConflicts, ROOMS, KELOMPOK_KERJA } from '../utils/storage';
+import { CheckCircle, XCircle, AlertCircle, Clock, FileText, Pencil, X, Save, Users, AlertTriangle } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { id } from 'date-fns/locale';
 
 export default function SecretaryPanel() {
-  const { role, isSecretary } = useAuth();
+  const { isSecretary } = useAuth();
   const [bookings, setBookings] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
@@ -117,9 +117,13 @@ export default function SecretaryPanel() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {bookings.map(b => {
             const isEditing = editingId === b.id;
+            let conflicts = [];
+            if (b.status === 'PENDING') {
+              conflicts = getConflicts(b);
+            }
 
             return (
-              <div key={b.id} className="card" style={{ padding: '1.25rem' }}>
+              <div key={b.id} className="card" style={{ padding: '1.25rem', borderLeft: conflicts.length > 0 ? '4px solid hsl(var(--color-danger))' : '1px solid var(--border-light)' }}>
 
                 {/* View Mode */}
                 {!isEditing && (
@@ -161,6 +165,25 @@ export default function SecretaryPanel() {
                         )}
                       </div>
                     </div>
+
+                    {/* Conflict Warning */}
+                    {conflicts.length > 0 && (
+                      <div style={{
+                        background: 'hsl(var(--color-danger-light))', color: 'hsl(var(--color-danger))',
+                        padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', fontSize: '0.8125rem',
+                        display: 'flex', alignItems: 'flex-start', gap: '0.5rem', marginTop: '0.25rem'
+                      }}>
+                        <AlertTriangle size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
+                        <div>
+                          <strong>Peringatan Bentrok Jadwal:</strong> Pengajuan ini bertabrakan dengan {conflicts.length} jadwal lain yang sudah disetujui/pending pada waktu yang sama.
+                          <ul style={{ paddingLeft: '1.25rem', marginTop: '0.25rem', marginBottom: 0 }}>
+                            {conflicts.map(c => (
+                              <li key={c.id}>{c.agenda} ({c.startTime} - {c.endTime}) - {c.kelompokKerja} [{c.status}]</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Content */}
                     <h3 style={{ fontSize: '1.125rem', fontWeight: '700' }}>{b.agenda || 'Tanpa Agenda'}</h3>

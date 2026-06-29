@@ -13,7 +13,7 @@ export default function BookingForm() {
     startTime: '',
     endTime: '',
     roomId: ROOMS[0].id,
-    kelompokKerja: KELOMPOK_KERJA[0],
+    kelompokKerja: isKelompokKerja ? role : KELOMPOK_KERJA[0],
     agenda: '',
     fileDraft: null
   });
@@ -115,7 +115,7 @@ export default function BookingForm() {
 
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">Kelompok Kerja (Pokja)</label>
-            <select name="kelompokKerja" value={formData.kelompokKerja} onChange={handleChange} className="form-control" required>
+            <select name="kelompokKerja" value={formData.kelompokKerja} onChange={handleChange} className="form-control" disabled={isKelompokKerja} required>
               {KELOMPOK_KERJA.map(k => (
                 <option key={k} value={k}>{k}</option>
               ))}
