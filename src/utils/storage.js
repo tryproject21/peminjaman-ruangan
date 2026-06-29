@@ -29,14 +29,24 @@ export const getBookings = async () => {
 export const addBooking = async (booking) => {
   const newBooking = {
     id: Date.now().toString(),
-    ...booking,
+    date: booking.date,
+    startTime: booking.startTime,
+    endTime: booking.endTime,
+    roomId: booking.roomId,
+    roomName: booking.roomName,
+    kelompokKerja: booking.kelompokKerja,
+    agenda: booking.agenda,
+    fileDraft: booking.fileDraft,
+    fileData: booking.fileData,
     status: 'PENDING',
     createdAt: new Date().toISOString()
   };
+  
   const { data, error } = await supabase
     .from('bookings')
     .insert([newBooking])
     .select();
+    
   if (error) {
     console.error('Error adding booking:', error);
     return null;
