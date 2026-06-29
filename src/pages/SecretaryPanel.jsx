@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { getBookings, updateBookingStatus, editBooking, checkOverlap, getConflicts, ROOMS, KELOMPOK_KERJA } from '../utils/storage';
+import { getBookings, updateBookingStatus, editBooking, deleteBooking, checkOverlap, getConflicts, ROOMS, KELOMPOK_KERJA } from '../utils/storage';
 import { CheckCircle, XCircle, AlertCircle, Clock, FileText, Pencil, X, Save, Users, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { id } from 'date-fns/locale';
@@ -89,6 +89,13 @@ export default function SecretaryPanel() {
   const handleStatusUpdate = async (id, newStatus) => {
     await updateBookingStatus(id, newStatus);
     await loadBookings();
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Yakin ingin menghapus jadwal ini secara permanen?')) {
+      await deleteBooking(id);
+      await loadBookings();
+    }
   };
 
   const startEdit = (booking) => {
@@ -210,9 +217,14 @@ export default function SecretaryPanel() {
                           </>
                         )}
                         {b.status === 'REJECTED' && (
-                          <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem' }} onClick={() => handleStatusUpdate(b.id, 'PENDING')}>
-                            Kembalikan
-                          </button>
+                          <>
+                            <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem' }} onClick={() => handleStatusUpdate(b.id, 'PENDING')}>
+                              Kembalikan
+                            </button>
+                            <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', color: 'hsl(var(--color-danger))', borderColor: 'hsl(var(--color-danger-light))' }} onClick={() => handleDelete(b.id)}>
+                              Hapus
+                            </button>
+                          </>
                         )}
                       </div>
                     </div>
