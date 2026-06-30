@@ -197,7 +197,13 @@ export default function SecretaryPanel() {
         </div>
       </div>
 
-      {filteredBookings.length === 0 ? (
+      {isLoading ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          {[1, 2, 3].map(i => (
+             <div key={i} className="card skeleton" style={{ padding: '1.25rem', height: '140px' }}></div>
+          ))}
+        </div>
+      ) : filteredBookings.length === 0 ? (
         <div className="card text-center" style={{ padding: '3rem', borderStyle: 'dashed' }}>
           <CheckCircle size={48} style={{ color: 'hsl(var(--color-success))', margin: '0 auto 1rem', opacity: 0.5 }} />
           <h3 className="font-semibold" style={{ fontSize: '1.125rem' }}>Kosong</h3>

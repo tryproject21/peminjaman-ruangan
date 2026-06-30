@@ -217,14 +217,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {isLoading ? (
-        <div style={{ textAlign: 'center', padding: '4rem 0', color: 'var(--text-muted)' }}>
-          <div className="spinner" style={{ width: '40px', height: '40px', margin: '0 auto 1rem', border: '4px solid rgba(0,0,0,0.1)', borderLeftColor: 'hsl(var(--color-primary))', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
-          <p>Memuat jadwal dari database online...</p>
-          <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
-        </div>
-      ) : (
-        <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
+      <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
 
         {/* Left Sidebar */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flexShrink: 0 }}>
@@ -326,7 +319,13 @@ export default function Dashboard() {
                         </div>
                       ))}
 
-                      {roomBookings.map(b => {
+                      {isLoading ? (
+                        <>
+                          <div className="skeleton" style={{ position: 'absolute', top: '120px', left: '10px', right: '10px', height: '100px' }}></div>
+                          <div className="skeleton" style={{ position: 'absolute', top: '350px', left: '10px', right: '10px', height: '60px', opacity: 0.7 }}></div>
+                        </>
+                      ) : (
+                        roomBookings.map(b => {
                         const pos = getPosition(b.startTime, b.endTime);
                         if (!pos) return null;
                         const colors = GROUP_COLORS[b.kelompokKerja] || { bg: '#5f6368' };
@@ -358,7 +357,8 @@ export default function Dashboard() {
                             )}
                           </div>
                         );
-                      })}
+                        })
+                      )}
                     </div>
                   );
                 })
@@ -374,7 +374,13 @@ export default function Dashboard() {
                         </div>
                       ))}
 
-                      {dayBookings.map(b => {
+                      {isLoading ? (
+                        <>
+                          <div className="skeleton" style={{ position: 'absolute', top: '150px', left: '5%', width: '90%', height: '80px' }}></div>
+                          <div className="skeleton" style={{ position: 'absolute', top: '400px', left: '5%', width: '90%', height: '120px', opacity: 0.7 }}></div>
+                        </>
+                      ) : (
+                        dayBookings.map(b => {
                         const pos = getPosition(b.startTime, b.endTime);
                         if (!pos) return null;
                         const colors = GROUP_COLORS[b.kelompokKerja] || { bg: '#5f6368' };
@@ -400,7 +406,8 @@ export default function Dashboard() {
                             </div>
                           </div>
                         );
-                      })}
+                        })
+                      )}
                     </div>
                   );
                 })
@@ -416,8 +423,7 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-        </div>
-      )}
+      </div>
 
       {/* ===== DETAIL MODAL ===== */}
       {selectedBooking && (
