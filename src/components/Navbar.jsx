@@ -1,12 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Calendar, User, ShieldCheck, PlusSquare } from 'lucide-react';
+import { Calendar, User, ShieldCheck, PlusSquare, Bell, Moon, Sun } from 'lucide-react';
+import { getBookings } from '../utils/storage';
 
 export default function Navbar() {
   const { role, login, isSecretary, isKelompokKerja } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [isDark, setIsDark] = useState(() => localStorage.getItem('dk_theme') === 'dark');
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('dk_theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('dk_theme', 'light');
+    }
+  }, [isDark]);
+
+  useEffect(() => {
+    if (isSecretary) {
+      const fetchPending = async () => {
+        const data = await getBookings();
+        setPendingCount(data.filter(b => b.status === 'PENDING').length);
+      };
+      fetchPending();
+      const interval = setInterval(fetchPending, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [isSecretary, location.pathname]);
 
   const handleRoleChange = (e) => {
     const selected = e.target.value;
@@ -51,7 +77,20 @@ export default function Navbar() {
 
           <div className="flex items-center gap-2">
             {isSecretary ? (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
+                <div style={{ position: 'relative', cursor: 'pointer', color: 'var(--text-main)' }} onClick={() => navigate('/secretary')}>
+                  <Bell size={20} />
+                  {pendingCount > 0 && (
+                    <span style={{
+                      position: 'absolute', top: '-6px', right: '-6px', background: 'hsl(var(--color-danger))',
+                      color: 'white', fontSize: '0.65rem', fontWeight: 'bold', width: '16px', height: '16px',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%'
+                    }}>
+                      {pendingCount}
+                    </span>
+                  )}
+                </div>
+                <div style={{ width: '1px', height: '1.5rem', background: 'var(--border-light)' }}></div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'hsl(var(--color-primary))' }}>
                   <ShieldCheck size={18} />
                   <span className="text-sm font-semibold">Admin Sekretaris</span>
@@ -84,6 +123,13 @@ export default function Navbar() {
                 </select>
               </>
             )}
+            
+            <button 
+              onClick={() => setIsDark(!isDark)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-main)', marginLeft: '0.5rem' }}
+            >
+              {isDark ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
           </div>
         </div>
       </div>
