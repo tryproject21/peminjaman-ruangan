@@ -16,6 +16,7 @@ export default function SecretaryPanel() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [conflictsData, setConflictsData] = useState({});
+  const [activeTab, setActiveTab] = useState('NEW');
 
   const loadBookings = async () => {
     setIsLoading(true);
@@ -159,22 +160,52 @@ export default function SecretaryPanel() {
     return 'Ditolak';
   };
 
+  const filteredBookings = bookings.filter(b => {
+    if (activeTab === 'NEW') return b.status === 'PENDING' || b.status === 'REJECTED';
+    if (activeTab === 'APPROVED') return b.status === 'APPROVED';
+    return true;
+  });
+
   return (
     <div className="container mt-8 animate-fade-in" style={{ maxWidth: '900px', margin: '2rem auto' }}>
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: '700' }}>Panel Approval Sekretaris</h2>
-        <p className="text-muted">Kelola dan edit pengajuan peminjaman ruangan rapat</p>
+      <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: '700' }}>Panel Approval Sekretaris</h2>
+          <p className="text-muted">Kelola dan edit pengajuan peminjaman ruangan rapat</p>
+        </div>
+        
+        <div style={{ display: 'flex', background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
+          <button 
+            className={`btn ${activeTab === 'NEW' ? 'btn-primary' : ''}`}
+            style={{ padding: '0.5rem 1rem', fontSize: '0.8125rem', border: 'none', borderRadius: 0 }}
+            onClick={() => setActiveTab('NEW')}
+          >
+            Pengajuan Baru
+            {bookings.some(b => b.status === 'PENDING') && (
+              <span style={{ marginLeft: '6px', background: 'hsl(var(--color-danger))', color: 'white', padding: '2px 6px', borderRadius: '10px', fontSize: '0.65rem', fontWeight: 'bold' }}>
+                {bookings.filter(b => b.status === 'PENDING').length}
+              </span>
+            )}
+          </button>
+          <button 
+            className={`btn ${activeTab === 'APPROVED' ? 'btn-primary' : ''}`}
+            style={{ padding: '0.5rem 1rem', fontSize: '0.8125rem', border: 'none', borderRadius: 0 }}
+            onClick={() => setActiveTab('APPROVED')}
+          >
+            Telah Disetujui
+          </button>
+        </div>
       </div>
 
-      {bookings.length === 0 ? (
+      {filteredBookings.length === 0 ? (
         <div className="card text-center" style={{ padding: '3rem', borderStyle: 'dashed' }}>
-          <CheckCircle size={48} style={{ color: 'hsl(var(--color-success))', margin: '0 auto 1rem' }} />
-          <h3 className="font-semibold" style={{ fontSize: '1.125rem' }}>Semua bersih!</h3>
-          <p className="text-muted">Belum ada pengajuan peminjaman yang masuk.</p>
+          <CheckCircle size={48} style={{ color: 'hsl(var(--color-success))', margin: '0 auto 1rem', opacity: 0.5 }} />
+          <h3 className="font-semibold" style={{ fontSize: '1.125rem' }}>Kosong</h3>
+          <p className="text-muted">Tidak ada jadwal di kategori ini.</p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {bookings.map(b => {
+          {filteredBookings.map(b => {
             const isEditing = editingId === b.id;
             let conflicts = [];
             if (b.status === 'PENDING') {
