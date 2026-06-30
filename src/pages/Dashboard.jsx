@@ -217,10 +217,10 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
+      <div className="dashboard-layout" style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
 
         {/* Left Sidebar */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flexShrink: 0 }}>
+        <div className="dashboard-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flexShrink: 0 }}>
           <MiniCalendar selectedDate={selectedDate} onSelectDate={setSelectedDate} />
           {/* Legend */}
           <div style={{
@@ -256,14 +256,11 @@ export default function Dashboard() {
         </div>
 
         {/* Right: Calendar Time Grid */}
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{
-            background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)',
-            border: '1px solid var(--border-light)', boxShadow: 'var(--shadow-sm)', overflow: 'hidden',
-          }}>
+        <div className="dashboard-grid-container" style={{ flex: 1, minWidth: 0, background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-light)', boxShadow: 'var(--shadow-sm)' }}>
+          <div className="dashboard-grid">
 
             {/* Column Headers */}
-            <div style={{ display: 'flex', borderBottom: '1px solid var(--border-light)' }}>
+            <div style={{ display: 'flex', borderBottom: '1px solid var(--border-light)', padding: '0.75rem 0' }}>
               <div style={{ width: '64px', flexShrink: 0 }}></div>
               
               {viewMode === 'daily' ? (

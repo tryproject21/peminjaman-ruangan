@@ -56,8 +56,8 @@ export default function Navbar() {
           </div>
         </Link>
 
-        <div className="flex items-center gap-4">
-          <div className="flex gap-2">
+        <div className="flex items-center gap-4 navbar-right">
+          <div className="flex gap-2 desktop-only">
             <Link to="/" className={navLinkClass('/')}>
               Dashboard
             </Link>
@@ -73,9 +73,9 @@ export default function Navbar() {
             )}
           </div>
 
-          <div style={{ width: '1px', height: '2rem', background: 'var(--border-light)' }}></div>
+          <div className="desktop-only" style={{ width: '1px', height: '2rem', background: 'var(--border-light)' }}></div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 navbar-right">
             {isSecretary ? (
               <div className="flex items-center gap-4">
                 <div style={{ position: 'relative', cursor: 'pointer', color: 'var(--text-main)' }} onClick={() => navigate('/secretary')}>
@@ -90,10 +90,10 @@ export default function Navbar() {
                     </span>
                   )}
                 </div>
-                <div style={{ width: '1px', height: '1.5rem', background: 'var(--border-light)' }}></div>
+                <div style={{ width: '1px', height: '1.5rem', background: 'var(--border-light)' }} className="desktop-only"></div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'hsl(var(--color-primary))' }}>
                   <ShieldCheck size={18} />
-                  <span className="text-sm font-semibold">Admin Sekretaris</span>
+                  <span className="text-sm font-semibold secretary-label">Admin Sekretaris</span>
                 </div>
                 <button 
                   onClick={() => { login('GUEST'); navigate('/'); }} 
@@ -132,6 +132,35 @@ export default function Navbar() {
             </button>
           </div>
         </div>
+      </div>
+      
+      {/* Mobile Bottom Navigation */}
+      <div className="mobile-bottom-nav" style={{ display: 'none' }}>
+        <Link to="/" className={`mobile-nav-item ${location.pathname === '/' ? 'active' : ''}`}>
+          <Calendar size={20} />
+          <span>Beranda</span>
+        </Link>
+        {isKelompokKerja && (
+          <Link to="/booking" className={`mobile-nav-item ${location.pathname === '/booking' ? 'active' : ''}`}>
+            <PlusSquare size={20} />
+            <span>Pengajuan</span>
+          </Link>
+        )}
+        {isSecretary && (
+          <Link to="/secretary" className={`mobile-nav-item ${location.pathname === '/secretary' ? 'active' : ''}`}>
+            <div style={{ position: 'relative' }}>
+              <ShieldCheck size={20} />
+              {pendingCount > 0 && (
+                <span style={{
+                  position: 'absolute', top: '-4px', right: '-4px', background: 'hsl(var(--color-danger))',
+                  color: 'white', fontSize: '0.5rem', fontWeight: 'bold', width: '12px', height: '12px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%'
+                }}>{pendingCount}</span>
+              )}
+            </div>
+            <span>Approval</span>
+          </Link>
+        )}
       </div>
     </nav>
   );
