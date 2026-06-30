@@ -347,11 +347,13 @@ export default function Dashboard() {
                           >
                             <div style={{
                               fontWeight: '600', fontSize: isShort ? '0.6875rem' : '0.75rem',
-                              lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%',
+                              lineHeight: 1.2, width: '100%',
+                              display: '-webkit-box', WebkitLineClamp: isShort ? 1 : 3, WebkitBoxOrient: 'vertical', overflow: 'hidden'
                             }}>{b.agenda || 'Rapat'}</div>
                             {!isShort && (
-                              <div style={{ fontSize: '0.6875rem', opacity: 0.9, fontWeight: '500' }}>
-                                {b.startTime} – {b.endTime}
+                              <div style={{ fontSize: '0.6875rem', opacity: 0.9, fontWeight: '500', display: 'flex', flexDirection: 'column' }}>
+                                <span>{b.startTime} – {b.endTime}</span>
+                                {b.pic && <span>PIC: {b.pic}</span>}
                               </div>
                             )}
                           </div>
