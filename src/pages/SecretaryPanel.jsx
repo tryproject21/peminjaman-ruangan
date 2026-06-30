@@ -107,6 +107,7 @@ export default function SecretaryPanel() {
       endTime: booking.endTime,
       roomId: booking.roomId,
       kelompokKerja: booking.kelompokKerja,
+      pic: booking.pic || '',
       agenda: booking.agenda || '',
     });
   };
@@ -249,7 +250,7 @@ export default function SecretaryPanel() {
                     )}
 
                     {/* Content */}
-                    <h3 style={{ fontSize: '1.125rem', fontWeight: '700' }}>{b.agenda || 'Tanpa Agenda'}</h3>
+                    <h3 style={{ fontSize: '1.125rem', fontWeight: '700' }}>{b.agenda || 'Tanpa Agenda'} {b.pic && <span style={{ fontSize: '0.875rem', fontWeight: '500', color: 'var(--text-muted)' }}>(PIC: {b.pic})</span>}</h3>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
                       <span><Clock size={14} style={{ display: 'inline', verticalAlign: '-2px' }} /> {format(parseISO(b.date), 'dd MMM yyyy', { locale: id })} · {b.startTime} - {b.endTime}</span>
                       <span style={{ fontWeight: '600', color: 'var(--text-main)' }}>{b.roomName}</span>
@@ -293,9 +294,15 @@ export default function SecretaryPanel() {
                       </div>
                     </div>
 
-                    <div>
-                      <label className="form-label">Agenda</label>
-                      <input type="text" name="agenda" value={editData.agenda} onChange={handleEditChange} className="form-control" />
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                      <div>
+                        <label className="form-label">Agenda</label>
+                        <input type="text" name="agenda" value={editData.agenda} onChange={handleEditChange} className="form-control" />
+                      </div>
+                      <div>
+                        <label className="form-label">PIC (Opsional)</label>
+                        <input type="text" name="pic" value={editData.pic} onChange={handleEditChange} className="form-control" />
+                      </div>
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>

@@ -14,6 +14,7 @@ export default function BookingForm() {
     endTime: '',
     roomId: ROOMS[0].id,
     kelompokKerja: isKelompokKerja ? role : KELOMPOK_KERJA[0],
+    pic: '',
     agenda: '',
     fileDraft: null
   });
@@ -156,17 +157,30 @@ export default function BookingForm() {
             </select>
           </div>
 
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">Agenda / Tentang Rapat</label>
-            <input 
-              type="text" 
-              name="agenda" 
-              value={formData.agenda} 
-              onChange={handleChange} 
-              className="form-control" 
-              placeholder="Contoh: Rapat Koordinasi Konservasi Energi" 
-              required 
-            />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+            <div>
+              <label className="form-label" style={{ fontSize: '0.875rem' }}>Agenda / Tentang Rapat</label>
+              <input 
+                type="text" 
+                name="agenda" 
+                value={formData.agenda} 
+                onChange={handleChange} 
+                className="form-control" 
+                placeholder="Contoh: Rapat Evaluasi Bulanan"
+                required
+              />
+            </div>
+            <div>
+              <label className="form-label" style={{ fontSize: '0.875rem' }}>Nama PIC (Opsional)</label>
+              <input 
+                type="text" 
+                name="pic" 
+                value={formData.pic} 
+                onChange={handleChange} 
+                className="form-control" 
+                placeholder="Contoh: Budi Santoso"
+              />
+            </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>

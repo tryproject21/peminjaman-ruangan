@@ -35,6 +35,7 @@ export const addBooking = async (booking) => {
     roomId: booking.roomId,
     roomName: booking.roomName,
     kelompokKerja: booking.kelompokKerja,
+    pic: booking.pic || null,
     agenda: booking.agenda,
     fileDraft: booking.fileDraft,
     fileData: booking.fileData,

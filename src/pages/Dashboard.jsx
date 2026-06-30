@@ -131,6 +131,7 @@ export default function Dashboard() {
       endTime: selectedBooking.endTime,
       roomId: selectedBooking.roomId,
       kelompokKerja: selectedBooking.kelompokKerja,
+      pic: selectedBooking.pic || '',
       agenda: selectedBooking.agenda || '',
     });
   };
@@ -430,7 +431,7 @@ export default function Dashboard() {
                       {selectedBooking.agenda || 'Rapat'}
                     </h3>
                     <p style={{ fontSize: '0.8125rem', opacity: 0.9 }}>
-                      Diajukan oleh Pokja {selectedBooking.kelompokKerja}
+                      Diajukan oleh Pokja {selectedBooking.kelompokKerja} {selectedBooking.pic ? `(PIC: ${selectedBooking.pic})` : ''}
                     </p>
                   </div>
                   <button onClick={closeDetail} style={{
@@ -529,9 +530,15 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <div>
-                    <label className="form-label">Agenda</label>
-                    <input type="text" name="agenda" value={editData.agenda} onChange={handleEditChange} className="form-control" />
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                    <div>
+                      <label className="form-label">Agenda</label>
+                      <input type="text" name="agenda" value={editData.agenda} onChange={handleEditChange} className="form-control" />
+                    </div>
+                    <div>
+                      <label className="form-label">PIC (Opsional)</label>
+                      <input type="text" name="pic" value={editData.pic} onChange={handleEditChange} className="form-control" />
+                    </div>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
