@@ -321,8 +321,8 @@ export default function Dashboard() {
                   return (
                     <div key={room.id} style={{ flex: 1, position: 'relative', borderLeft: '1px solid var(--border-light)' }}>
                       {HOURS_ARRAY.map(hour => (
-                        <div key={hour} style={{ height: `${HOUR_HEIGHT}px`, borderBottom: '1px solid #f0f0f0', position: 'relative' }}>
-                          <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, borderBottom: '1px dashed #f5f5f5' }}></div>
+                        <div key={hour} style={{ height: `${HOUR_HEIGHT}px`, borderBottom: '1px solid var(--border-light)', position: 'relative' }}>
+                          <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, borderBottom: '1px dashed var(--border-light)', opacity: 0.7 }}></div>
                         </div>
                       ))}
 
@@ -369,8 +369,8 @@ export default function Dashboard() {
                   return (
                     <div key={dayDate} style={{ flex: 1, position: 'relative', borderLeft: '1px solid var(--border-light)' }}>
                       {HOURS_ARRAY.map(hour => (
-                        <div key={hour} style={{ height: `${HOUR_HEIGHT}px`, borderBottom: '1px solid #f0f0f0', position: 'relative' }}>
-                          <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, borderBottom: '1px dashed #f5f5f5' }}></div>
+                        <div key={hour} style={{ height: `${HOUR_HEIGHT}px`, borderBottom: '1px solid var(--border-light)', position: 'relative' }}>
+                          <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, borderBottom: '1px dashed var(--border-light)', opacity: 0.7 }}></div>
                         </div>
                       ))}
 
