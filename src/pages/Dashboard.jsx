@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getBookings, editBooking, deleteBooking, checkOverlap, ROOMS, KELOMPOK_KERJA } from '../utils/storage';
-import { ChevronLeft, ChevronRight, Users, X, Clock, MapPin, FileText, Download, Pencil, Save, AlertCircle, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Users, X, Clock, MapPin, FileText, Download, Pencil, Save, AlertCircle, Trash2, Eye } from 'lucide-react';
 import MiniCalendar from '../components/MiniCalendar';
+import FilePreviewModal from '../components/FilePreviewModal';
 import { useAuth } from '../context/AuthContext';
 
 const START_HOUR = 8;
@@ -36,6 +37,7 @@ export default function Dashboard() {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({});
   const [editError, setEditError] = useState('');
+  const [previewBooking, setPreviewBooking] = useState(null);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -491,13 +493,15 @@ export default function Dashboard() {
                         </span>
                       </div>
                       {selectedBooking.fileData && (
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button
-                          onClick={() => handleDownload(selectedBooking)}
-                          className="btn btn-primary"
+                          onClick={() => setPreviewBooking(selectedBooking)}
+                          className="btn btn-outline"
                           style={{ padding: '0.4rem 0.875rem', fontSize: '0.75rem', flexShrink: 0 }}
                         >
-                          <Download size={14} /> Download
+                          <Eye size={14} /> Lihat File
                         </button>
+                      </div>
                       )}
                     </div>
                   )}
@@ -582,6 +586,14 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+      )}
+
+      {previewBooking && (
+        <FilePreviewModal
+          fileData={previewBooking.fileData}
+          fileName={previewBooking.fileDraft}
+          onClose={() => setPreviewBooking(null)}
+        />
       )}
     </div>
   );

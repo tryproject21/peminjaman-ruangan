@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getBookings, updateBookingStatus, editBooking, deleteBooking, checkOverlap, getConflicts, ROOMS, KELOMPOK_KERJA } from '../utils/storage';
-import { CheckCircle, XCircle, AlertCircle, Clock, FileText, Pencil, X, Save, Users, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { CheckCircle, XCircle, AlertCircle, Clock, FileText, Pencil, X, Save, Users, AlertTriangle, ShieldCheck, Eye } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { id } from 'date-fns/locale';
+import FilePreviewModal from '../components/FilePreviewModal';
 
 export default function SecretaryPanel() {
   const { isSecretary, login } = useAuth();
@@ -17,6 +18,7 @@ export default function SecretaryPanel() {
   const [isLoading, setIsLoading] = useState(false);
   const [conflictsData, setConflictsData] = useState({});
   const [activeTab, setActiveTab] = useState('NEW');
+  const [previewBooking, setPreviewBooking] = useState(null);
 
   const loadBookings = async () => {
     setIsLoading(true);
@@ -293,8 +295,22 @@ export default function SecretaryPanel() {
                       <span style={{ fontWeight: '600', color: 'var(--text-main)' }}>{b.roomName}</span>
                     </div>
                     {b.fileDraft && (
-                      <div style={{ fontSize: '0.8125rem', color: 'hsl(var(--color-primary))' }}>
-                        <FileText size={14} style={{ display: 'inline', verticalAlign: '-2px' }} /> Draft: {b.fileDraft}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.5rem', background: 'var(--bg-main)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8125rem', color: 'var(--text-main)', overflow: 'hidden' }}>
+                          <FileText size={16} style={{ flexShrink: 0, color: 'var(--text-muted)' }} />
+                          <span style={{ fontWeight: '500', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {b.fileDraft}
+                          </span>
+                        </div>
+                        {b.fileData && (
+                          <button
+                            onClick={() => setPreviewBooking(b)}
+                            className="btn btn-outline"
+                            style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem', flexShrink: 0 }}
+                          >
+                            <Eye size={14} /> Lihat
+                          </button>
+                        )}
                       </div>
                     )}
                   </div>
@@ -369,6 +385,14 @@ export default function SecretaryPanel() {
             );
           })}
         </div>
+      )}
+
+      {previewBooking && (
+        <FilePreviewModal
+          fileData={previewBooking.fileData}
+          fileName={previewBooking.fileDraft}
+          onClose={() => setPreviewBooking(null)}
+        />
       )}
     </div>
   );
