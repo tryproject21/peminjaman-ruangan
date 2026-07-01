@@ -79,12 +79,20 @@ export default function Dashboard() {
 
   const getWeekDays = (dateStr) => {
     const curr = new Date(dateStr + 'T00:00:00');
-    const first = curr.getDate() - curr.getDay() + 1; // Start from Monday
+    const day = curr.getDay(); // 0 is Sunday
+    const diffToMonday = day === 0 ? -6 : 1 - day;
+    
+    const monday = new Date(curr);
+    monday.setDate(curr.getDate() + diffToMonday);
+
     const days = [];
-    for (let i = 0; i < 5; i++) { // Render Monday to Friday for weekly view
-      const d = new Date(curr.setDate(first + i));
-      const offset = d.getTimezoneOffset();
-      days.push(new Date(d.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0]);
+    for (let i = 0; i < 5; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const dateNum = String(d.getDate()).padStart(2, '0');
+      days.push(`${year}-${month}-${dateNum}`);
     }
     return days;
   };
