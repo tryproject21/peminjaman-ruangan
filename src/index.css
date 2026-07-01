@@ -316,5 +316,5 @@ h1, h2, h3, h4, h5, h6 {
 ::-webkit-scrollbar-track { background: transparent; }  
 ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; border: 2px solid var(--bg-main); }  
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }  
-@keyframes pulse-dot { 0%% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(234, 67, 53, 0.7); } 70%% { transform: scale(1); box-shadow: 0 0 0 8px rgba(234, 67, 53, 0); } 100%% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(234, 67, 53, 0); } }  
+@keyframes pulse-dot { 0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(234, 67, 53, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(234, 67, 53, 0); } 100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(234, 67, 53, 0); } }  
 .live-indicator-dot { animation: pulse-dot 2s infinite; } 
