@@ -308,3 +308,13 @@ h1, h2, h3, h4, h5, h6 {
   .secretary-label { display: none !important; }  
   main { padding-bottom: 70px !important; } 
 }
+  
+/* UI Enhancements */  
+.booking-block { transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, filter 0.2s ease; }  
+.booking-block:hover { transform: scale(1.02); z-index: 10 !important; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3) !important; filter: brightness(1.1); }  
+::-webkit-scrollbar { width: 8px; height: 8px; }  
+::-webkit-scrollbar-track { background: transparent; }  
+::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; border: 2px solid var(--bg-main); }  
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }  
+@keyframes pulse-dot { 0%% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(234, 67, 53, 0.7); } 70%% { transform: scale(1); box-shadow: 0 0 0 8px rgba(234, 67, 53, 0); } 100%% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(234, 67, 53, 0); } }  
+.live-indicator-dot { animation: pulse-dot 2s infinite; } 

@@ -339,6 +339,7 @@ export default function Dashboard() {
                         return (
                           <div
                             key={b.id}
+                            className="booking-block"
                             onClick={() => openDetail(b)}
                             style={{
                               position: 'absolute', top: `${pos.top + 2}px`, left: '4px', right: '4px', height: `${pos.height - 4}px`,
@@ -395,6 +396,7 @@ export default function Dashboard() {
                         return (
                           <div
                             key={b.id}
+                            className="booking-block"
                             onClick={() => openDetail(b)}
                             title={`${b.agenda}\n${b.roomName}`}
                             style={{
@@ -421,7 +423,7 @@ export default function Dashboard() {
               {/* Current Time Indicator */}
               {showNowLine && viewMode === 'daily' && selectedDate === now.toISOString().split('T')[0] && (
                 <div style={{ position: 'absolute', top: `${nowTop}px`, left: '52px', right: 0, zIndex: 10, pointerEvents: 'none' }}>
-                  <div style={{ position: 'absolute', left: '0', top: '-5px', width: '10px', height: '10px', borderRadius: '50%', background: '#ea4335' }}></div>
+                  <div className="live-indicator-dot" style={{ position: 'absolute', left: '0', top: '-5px', width: '10px', height: '10px', borderRadius: '50%', background: '#ea4335' }}></div>
                   <div style={{ marginLeft: '10px', height: '2px', background: '#ea4335' }}></div>
                 </div>
               )}
