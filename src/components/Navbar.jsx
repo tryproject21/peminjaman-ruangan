@@ -51,8 +51,8 @@ export default function Navbar() {
             <Calendar size={24} />
           </div>
           <div>
-            <h1 className="text-sm font-semibold">DK-Rooms</h1>
-            <p className="text-xs text-muted">Konservasi Energi</p>
+            <h1 className="text-sm font-semibold">Dashboard Peminjaman Ruangan</h1>
+            <p className="text-xs text-muted">Direktorat Konservasi Energi</p>
           </div>
         </Link>
 
