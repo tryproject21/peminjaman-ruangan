@@ -185,6 +185,7 @@ export default function Dashboard() {
             const today = new Date();
             const offset = today.getTimezoneOffset();
             setSelectedDate(new Date(today.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0]);
+            setViewMode('daily');
           }} className="btn btn-outline" style={{ padding: '0.4rem 1.1rem', fontSize: '0.8125rem' }}>
             Hari Ini
           </button>
