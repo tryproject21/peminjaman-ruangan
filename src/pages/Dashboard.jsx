@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { getBookings, editBooking, deleteBooking, checkOverlap, ROOMS, KELOMPOK_KERJA } from '../utils/storage';
-import { ChevronLeft, ChevronRight, Users, X, Clock, MapPin, FileText, Download, Pencil, Save, AlertCircle, Trash2, Eye } from 'lucide-react';
+import { getBookings, getBookingFileData, editBooking, deleteBooking, checkOverlap, ROOMS, KELOMPOK_KERJA, GOOGLE_CALENDAR_ID } from '../utils/storage';
+import { ChevronLeft, ChevronRight, Users, X, Clock, MapPin, FileText, Download, Pencil, Save, AlertCircle, Trash2, Eye, Calendar } from 'lucide-react';
 import MiniCalendar from '../components/MiniCalendar';
 import FilePreviewModal from '../components/FilePreviewModal';
 import { useAuth } from '../context/AuthContext';
@@ -108,6 +108,15 @@ export default function Dashboard() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handlePreviewFile = async (booking) => {
+    const fileData = await getBookingFileData(booking.id);
+    if (fileData) {
+      setPreviewBooking({ ...booking, fileData });
+    } else {
+      alert("Gagal memuat file dari server.");
+    }
   };
 
   // Detail Modal Actions
@@ -225,6 +234,37 @@ export default function Dashboard() {
           <h2 style={{ fontSize: '1.375rem', fontWeight: '400', color: 'var(--text-main)', margin: 0 }}>
             {viewMode === 'daily' ? formatDateLabel(selectedDate) : `Minggu dari ${formatDateLabel(getWeekDays(selectedDate)[0])}`}
           </h2>
+        </div>
+        
+        {/* Subscribe to Google Calendar Link */}
+        <a 
+          href={`https://calendar.google.com/calendar/u/0/r?cid=${GOOGLE_CALENDAR_ID}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn btn-outline"
+          style={{ padding: '0.4rem 1rem', fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}
+          title="Berlangganan Jadwal via Google Calendar"
+        >
+          <Calendar size={16} /> Subscribe Calendar
+        </a>
+      </div>
+
+      {/* Info Banner untuk Berlangganan Google Calendar */}
+      <div style={{
+        background: 'rgba(26, 115, 232, 0.1)',
+        border: '1px solid rgba(26, 115, 232, 0.3)',
+        borderRadius: 'var(--radius-md)',
+        padding: '0.75rem 1rem',
+        marginBottom: '1.25rem',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.75rem',
+        color: '#1a73e8'
+      }}>
+        <AlertCircle size={20} style={{ flexShrink: 0 }} />
+        <div style={{ fontSize: '0.875rem', lineHeight: '1.4' }}>
+          <strong>Tips:</strong> Anda dapat menampilkan jadwal peminjaman ruangan ini di Google Calendar pribadi Anda! 
+          Klik tombol <strong>"Subscribe Calendar"</strong> di kanan atas untuk berlangganan.
         </div>
       </div>
 
@@ -493,17 +533,15 @@ export default function Dashboard() {
                           {selectedBooking.fileDraft}
                         </span>
                       </div>
-                      {selectedBooking.fileData && (
                       <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button
-                          onClick={() => setPreviewBooking(selectedBooking)}
+                          onClick={() => handlePreviewFile(selectedBooking)}
                           className="btn btn-outline"
                           style={{ padding: '0.4rem 0.875rem', fontSize: '0.75rem', flexShrink: 0 }}
                         >
                           <Eye size={14} /> Lihat File
                         </button>
                       </div>
-                      )}
                     </div>
                   )}
 
